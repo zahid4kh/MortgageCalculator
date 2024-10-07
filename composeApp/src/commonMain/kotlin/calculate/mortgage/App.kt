@@ -42,7 +42,7 @@ fun App() {
 }
 
 @Composable
-fun Calculator(){
+fun Calculator() {
     var amount by remember { mutableStateOf("") }
     var term by remember { mutableStateOf("") }
     var rate by remember { mutableStateOf("") }
@@ -51,53 +51,98 @@ fun Calculator(){
     var isRepayment by remember { mutableStateOf(false) }
     var isInterestOnly by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp)).background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center)
+    Column(
+        modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
+    )
     {
         Header()
 
-        OutlinedTextField(value = amount, onValueChange = {amount = it}, label = {Text (mortgageAmount)}, modifier = Modifier.width(rowWidth),
-            trailingIcon = {Icon(Icons.Default.Clear, contentDescription = "Clear",
-                modifier = Modifier.clickable(enabled = true, onClick = {amount = ""}))})
+        OutlinedTextField(value = amount,
+            onValueChange = { amount = it },
+            label = { Text(mortgageAmount) },
+            modifier = Modifier.width(rowWidth),
+            trailingIcon = {
+                Icon(Icons.Default.Clear, contentDescription = "Clear",
+                    modifier = Modifier.clickable(enabled = true, onClick = { amount = "" })
+                )
+            })
 
-        Row(modifier = Modifier.width(rowWidth)){
+        Row(modifier = Modifier.width(rowWidth)) {
 
-            OutlinedTextField(value = term, onValueChange = {term = it}, label = {Text (mortgageTerm)}, modifier = Modifier.width(smallTextField),
-                trailingIcon = {Icon(Icons.Default.Clear, contentDescription = "Clear",
-                    modifier = Modifier.clickable(enabled = true, onClick = {term = ""}))})
+            OutlinedTextField(value = term,
+                onValueChange = { term = it },
+                label = { Text(mortgageTerm) },
+                modifier = Modifier.width(smallTextField),
+                trailingIcon = {
+                    Icon(Icons.Default.Clear, contentDescription = "Clear",
+                        modifier = Modifier.clickable(enabled = true, onClick = { term = "" })
+                    )
+                })
 
             Spacer(modifier = Modifier.width(5.dp))
 
-            OutlinedTextField(value = rate, onValueChange = {rate = it}, label = {Text (interestRate)}, modifier = Modifier.width(smallTextField),
-                trailingIcon = {Icon(Icons.Default.Clear, contentDescription = "Clear",
-                    modifier = Modifier.clickable(enabled = true, onClick = {rate = ""}))})
+            OutlinedTextField(value = rate,
+                onValueChange = { rate = it },
+                label = { Text(interestRate) },
+                modifier = Modifier.width(smallTextField),
+                trailingIcon = {
+                    Icon(Icons.Default.Clear, contentDescription = "Clear",
+                        modifier = Modifier.clickable(enabled = true, onClick = { rate = "" })
+                    )
+                })
         }
 
-        Text(text = mortgageType, fontWeight = FontWeight.Bold, modifier = Modifier.align(alignment = Alignment.CenterHorizontally).padding(top = 12.dp))
+        Text(
+            text = mortgageType,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.align(alignment = Alignment.CenterHorizontally).padding(top = 12.dp)
+        )
 
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)){
-            Checkbox(checked = isRepayment, onCheckedChange = {isRepayment = it; isInterestOnly = false})
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)) {
+            Checkbox(
+                checked = isRepayment,
+                onCheckedChange = { isRepayment = it; isInterestOnly = false })
             Text(text = repayment)
         }
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)){
-            Checkbox(checked = isInterestOnly, onCheckedChange = {isInterestOnly = it; isRepayment = false})
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)) {
+            Checkbox(
+                checked = isInterestOnly,
+                onCheckedChange = { isInterestOnly = it; isRepayment = false })
             Text(text = interestOnly)
         }
 
         Button(
-            onClick ={},
+            onClick = {},
             colors = ButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = Color.Black,
                 disabledContentColor = Color.Black,
-                disabledContainerColor = Color.Unspecified)){
+                disabledContainerColor = Color.Unspecified
+            )
+        ) {
 
-            Icon(Icons.Default.Build, contentDescription = "", modifier = Modifier.padding(end = 10.dp))
+            Icon(
+                Icons.Default.Build,
+                contentDescription = "",
+                modifier = Modifier.padding(end = 10.dp)
+            )
             Text(text = calculate, fontWeight = FontWeight.Bold)
         }
     }
-    Column(){
+    var monthlyPayment by remember { mutableStateOf("") }
+    var totalRepayment by remember { mutableStateOf("") }
+    var totalInterest by remember { mutableStateOf("") }
 
+    Column(
+        modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+
+        Text(text = "Monthly Payment: $monthlyPayment")
+        Text(text = "Total Repayment: $totalRepayment")
+        Text(text = "Total Interest: $totalInterest")
     }
 }
 
