@@ -24,6 +24,9 @@ kotlin {
                         add(projectDirPath)
                     }
                 }
+                cssSupport{
+                    enabled = true
+                }
             }
         }
         binaries.executable()
