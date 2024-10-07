@@ -17,6 +17,7 @@ kotlin {
             val projectDirPath = project.projectDir.path
             commonWebpackConfig {
                 outputFileName = "composeApp.js"
+                outputPath = file("${layout.buildDirectory}/dist")
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
                     static = (static ?: mutableListOf()).apply {
                         // Serve sources to debug inside browser
@@ -59,6 +60,16 @@ compose.desktop {
             targetFormats(TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
             packageName = "calculate.mortgage"
             packageVersion = "1.0.0"
+        }
+    }
+}
+
+tasks.register("bundleForWeb") {
+    dependsOn("wasmJsBrowserProductionWebpack")
+    doLast {
+        copy {
+            from("${layout.buildDirectory}/distributions") // The default output for the Webpack task
+            into("$${layout.buildDirectory}/dist")          // Move the generated files to a 'dist' folder
         }
     }
 }
