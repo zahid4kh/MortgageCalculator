@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -54,35 +55,28 @@ import mortgagecalculator.composeapp.generated.resources.Res
 import mortgagecalculator.composeapp.generated.resources.moon
 import mortgagecalculator.composeapp.generated.resources.sun
 import org.jetbrains.compose.resources.imageResource
+import org.jetbrains.compose.resources.painterResource
+import ui.onPrimaryDark
+import ui.onPrimaryLight
+import ui.onSecondaryDark
+import ui.onSecondaryLight
+import ui.primaryDark
+import ui.primaryLight
+import ui.secondaryDark
+import ui.secondaryLight
+import ui.surfaceDark
+import ui.surfaceLight
 import kotlin.math.floor
 import kotlin.math.pow
 
 @Composable
 fun App() {
     MaterialTheme {
-        var isLightMode by remember {mutableStateOf(true)}
-        val moon: ImageBitmap =  imageResource(Res.drawable.moon)
-        val sun: ImageBitmap = imageResource(Res.drawable.sun)
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top,
+            modifier = Modifier.fillMaxSize()){
 
-        Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally){
-            Switch (
-                checked = isLightMode,
-                onCheckedChange = {isLightMode = it},
-                thumbContent = {
-                    if (isLightMode){
-                        Icon(bitmap = sun, contentDescription = "Sun")
-                    }else{
-                        Icon(bitmap = moon, contentDescription = "Moon")
-                    }
-                })
-
-            Row(modifier = Modifier.fillMaxSize().background(Color.LightGray),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center){
-
-                Calculator()
-            }
+            Calculator()
         }
-
     }
 }
 
@@ -95,6 +89,10 @@ fun Calculator() {
     var amountf by remember { mutableStateOf(amount.toFloat()) }
     var termf by remember { mutableStateOf(term.toFloat()) }
     var ratef by remember { mutableStateOf(rate.toFloat()) }
+
+    var isLightMode by remember {mutableStateOf(true)}
+    val moon: ImageBitmap =  imageResource(Res.drawable.moon)
+    val sun: ImageBitmap = imageResource(Res.drawable.sun)
 
     LaunchedEffect(amount) {
         amountf = if (amount.isNotEmpty()) amount.toFloatOrNull() ?: 0f else 0f
@@ -114,112 +112,129 @@ fun Calculator() {
     var isInterestOnly by remember { mutableStateOf(false) }
 
 
-    Column(
-        modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
-    )
-    {
-        Header()
+    Switch (
+        checked = isLightMode,
+        onCheckedChange = {isLightMode = it},
+        thumbContent = {
+            if (isLightMode){
+                Icon(bitmap = sun, contentDescription = "Sun")
+            }else{
+                Icon(bitmap = moon, contentDescription = "Moon")
+            }
+        })
 
-        OutlinedTextField(value = amount,
-            onValueChange = { amount = it },
-            label = { Text(mortgageAmount) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            modifier = Modifier.width(rowWidth),
-            trailingIcon = {
-                Icon(Icons.Default.Clear, contentDescription = "Clear",
-                    modifier = Modifier.clickable(enabled = true, onClick = { amount = "" })
-                )
-            })
+    Row(modifier = Modifier.fillMaxSize().background(if (isLightMode) surfaceLight else surfaceDark),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center){
 
-        Row(modifier = Modifier.width(rowWidth)) {
+        Column(modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
+            .background(if (isLightMode) primaryLight else primaryDark),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
 
-            OutlinedTextField(value = term,
-                onValueChange = { term = it },
-                label = { Text(mortgageTerm) },
-                modifier = Modifier.width(smallTextField),
+            Header(if (isLightMode) onPrimaryLight else onPrimaryDark)
+
+            OutlinedTextField(value = amount,
+                onValueChange = { amount = it },
+                label = { Text(mortgageAmount) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.width(rowWidth),
                 trailingIcon = {
                     Icon(Icons.Default.Clear, contentDescription = "Clear",
-                        modifier = Modifier.clickable(enabled = true, onClick = { term = "" })
+                        modifier = Modifier.clickable(enabled = true, onClick = { amount = "" })
                     )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
+                })
 
-            Spacer(modifier = Modifier.width(5.dp))
+            Row(modifier = Modifier.width(rowWidth)) {
 
-            OutlinedTextField(value = rate,
-                onValueChange = { rate = it },
-                label = { Text(interestRate) },
-                modifier = Modifier.width(smallTextField),
-                trailingIcon = {
-                    Icon(Icons.Default.Clear, contentDescription = "Clear",
-                        modifier = Modifier.clickable(enabled = true, onClick = { rate = "" })
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
+                OutlinedTextField(value = term,
+                    onValueChange = { term = it },
+                    label = { Text(mortgageTerm) },
+                    modifier = Modifier.width(smallTextField),
+                    trailingIcon = {
+                        Icon(Icons.Default.Clear, contentDescription = "Clear",
+                            modifier = Modifier.clickable(enabled = true, onClick = { term = "" })
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                OutlinedTextField(value = rate,
+                    onValueChange = { rate = it },
+                    label = { Text(interestRate) },
+                    modifier = Modifier.width(smallTextField),
+                    trailingIcon = {
+                        Icon(Icons.Default.Clear, contentDescription = "Clear",
+                            modifier = Modifier.clickable(enabled = true, onClick = { rate = "" })
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
+            }
+
+            Text(
+                text = mortgageType,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(alignment = Alignment.CenterHorizontally).padding(top = 12.dp),
+                color = if (isLightMode) onPrimaryLight else onPrimaryDark
+            )
+
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)) {
+                Checkbox(
+                    checked = isRepayment,
+                    onCheckedChange = { isRepayment = it; isInterestOnly = false })
+                Text(text = repayment)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)) {
+                Checkbox(
+                    checked = isInterestOnly,
+                    onCheckedChange = { isInterestOnly = it; isRepayment = false })
+                Text(text = interestOnly)
+            }
+
         }
-
-        Text(
-            text = mortgageType,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(alignment = Alignment.CenterHorizontally).padding(top = 12.dp)
-        )
-
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)) {
-            Checkbox(
-                checked = isRepayment,
-                onCheckedChange = { isRepayment = it; isInterestOnly = false })
-            Text(text = repayment)
-        }
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)) {
-            Checkbox(
-                checked = isInterestOnly,
-                onCheckedChange = { isInterestOnly = it; isRepayment = false })
-            Text(text = interestOnly)
-        }
-
-    }
 // TODO SCOPE START
-    val termInMonths by remember { derivedStateOf { termf * 12 } }
-    val monthlyInterestRate by remember { derivedStateOf { ratef / 100 / 12 } }
+        val termInMonths by remember { derivedStateOf { termf * 12 } }
+        val monthlyInterestRate by remember { derivedStateOf { ratef / 100 / 12 } }
 
-    val monthlyPayment by remember (amountf, monthlyInterestRate, termInMonths, isRepayment, isInterestOnly) {
-        derivedStateOf {
-            if (isRepayment){
-                amountf * ((monthlyInterestRate * (1 + monthlyInterestRate).pow(termInMonths)) / ((1 + monthlyInterestRate).pow(termInMonths) - 1))
-            }else if (isInterestOnly){
-                amountf * monthlyInterestRate
-            } else {
-                0f
+        val monthlyPayment by remember (amountf, monthlyInterestRate, termInMonths, isRepayment, isInterestOnly) {
+            derivedStateOf {
+                if (isRepayment){
+                    amountf * ((monthlyInterestRate * (1 + monthlyInterestRate).pow(termInMonths)) / ((1 + monthlyInterestRate).pow(termInMonths) - 1))
+                }else if (isInterestOnly){
+                    amountf * monthlyInterestRate
+                } else {
+                    0f
+                }
             }
         }
-    }
-    val totals by remember(monthlyPayment, termInMonths, amountf, isRepayment, isInterestOnly){
-        derivedStateOf{
-            if (isRepayment) {
-                val totalRepayment = monthlyPayment * termInMonths
-                val totalInterest = totalRepayment - amountf
-                Pair(totalRepayment, totalInterest)
-            } else if (isInterestOnly){
-                val totalInterest = termInMonths * monthlyPayment
-                val totalRepayment = totalInterest + amountf
-                Pair(totalRepayment, totalInterest)
-            } else {
-                Pair (0f, 0f)
+        val totals by remember(monthlyPayment, termInMonths, amountf, isRepayment, isInterestOnly){
+            derivedStateOf{
+                if (isRepayment) {
+                    val totalRepayment = monthlyPayment * termInMonths
+                    val totalInterest = totalRepayment - amountf
+                    Pair(totalRepayment, totalInterest)
+                } else if (isInterestOnly){
+                    val totalInterest = termInMonths * monthlyPayment
+                    val totalRepayment = totalInterest + amountf
+                    Pair(totalRepayment, totalInterest)
+                } else {
+                    Pair (0f, 0f)
+                }
             }
         }
-    }
 // TODO SCOPE END
-    Column(
-        modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        Column(
+            modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
+                .background(if (isLightMode) secondaryLight else secondaryDark),
+            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
 
-        Text(text = "Monthly Payment: ${floor(monthlyPayment * 100) / 100}")
-        Text(text = "Total Repayment: ${floor(totals.first * 100) / 100}")
-        Text(text = "Total Interest: ${floor(totals.second * 100) / 100}")
+            Text(text = "Monthly Payment: ${floor(monthlyPayment * 100) / 100}", color = if (isLightMode) onSecondaryLight else onSecondaryDark)
+            Text(text = "Total Repayment: ${floor(totals.first * 100) / 100}", color = if (isLightMode) onSecondaryLight else onSecondaryDark)
+            Text(text = "Total Interest: ${floor(totals.second * 100) / 100}", color = if (isLightMode) onSecondaryLight else onSecondaryDark)
+        }
     }
+
 }
 
 //dist folder - wasmJsBrowserDistribution
