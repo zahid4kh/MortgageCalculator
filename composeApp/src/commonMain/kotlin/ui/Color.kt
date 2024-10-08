@@ -1,10 +1,5 @@
 package ui
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF8F4C38)
@@ -78,41 +73,3 @@ val surfaceContainerLowDark = Color(0xFF231917)
 val surfaceContainerDark = Color(0xFF271D1B)
 val surfaceContainerHighDark = Color(0xFF322825)
 val surfaceContainerHighestDark = Color(0xFF3D322F)
-
-
-
-@Composable
-fun backgroundColor(): Color{
-    val bkg = if (isSystemInDarkTheme()){
-        surfaceDark
-    }else{
-        surfaceLight
-    }
-    return bkg
-}
-
-@Composable
-fun inputColumnColor(): Color{
-    val bkg = if (isSystemInDarkTheme()){
-        primaryDark
-    }else{
-        primaryLight
-    }
-    return bkg
-}
-
-@Composable
-fun titleColor(): Color{
-    val bkg = if (isSystemInDarkTheme()){
-        onPrimaryDark
-    }else{
-        onPrimaryLight
-    }
-    return bkg
-}
-
-
-
-val mainWindowBackground by remember { mutableStateOf(backgroundColor()) }
-val inputColumnBackground by remember { mutableStateOf(inputColumnColor()) }
-val titleTextColor by remember { mutableStateOf(titleColor()) }
