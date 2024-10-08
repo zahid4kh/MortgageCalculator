@@ -36,6 +36,10 @@ kotlin {
     
     sourceSets {
         val desktopMain by getting
+
+        val commonMain by getting {
+            resources.srcDir("src/commonMain/composeResources")
+        }
         
         commonMain.dependencies {
             implementation(compose.runtime)
