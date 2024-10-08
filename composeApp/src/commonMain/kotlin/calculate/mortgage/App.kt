@@ -47,7 +47,7 @@ fun Calculator() {
     var rate by remember { mutableStateOf("0") }
     val rowWidth = 410.dp
     val smallTextField = rowWidth / 2
-    var isRepayment by remember { mutableStateOf(false) }
+    var isRepayment by remember { mutableStateOf(true) }
     var isInterestOnly by remember { mutableStateOf(false) }
 
 
@@ -114,45 +114,33 @@ fun Calculator() {
         }
 
     }
+// TODO SCOPE START
+    val termInMonths by remember { derivedStateOf { term.toFloat() * 12 } }
+    val monthlyInterestRate by remember { derivedStateOf { rate.toFloat() / 12 } }
 
-    fun termInMonths(): Float{
-        val termInMonths = term.toFloat() * 12
-        return termInMonths
-    }
-    val termInMonths by remember { mutableStateOf(termInMonths()) }
-
-    fun monthlyInterestRate(): Float {
-        val monthlyRate = rate.toFloat() / 12
-        return monthlyRate
-    }
-    val monthlyInterestRate by remember { mutableStateOf(monthlyInterestRate()) }
-
-    fun monthlyPayment(): Float {
-        val monthlyPayment: Float = if (isRepayment){
-            amount.toFloat() * ((monthlyInterestRate * (1 + monthlyInterestRate).pow(termInMonths)) / ((1 + monthlyInterestRate).pow(termInMonths) - 1))
-        }else{
-            amount.toFloat() * monthlyInterestRate
+    val monthlyPayment by remember (amount, monthlyInterestRate, termInMonths, isRepayment) {
+        derivedStateOf {
+            if (isRepayment){
+                amount.toFloat() * ((monthlyInterestRate * (1 + monthlyInterestRate).pow(termInMonths)) / ((1 + monthlyInterestRate).pow(termInMonths) - 1))
+            }else{
+                amount.toFloat() * monthlyInterestRate
+            }
         }
-        return monthlyPayment
     }
-    val monthlyPayment by remember { mutableStateOf(monthlyPayment()) }
-
-    fun calculateTotals(): Pair<Float, Float> {
-        val totalRepayment: Float
-        val totalInterest: Float
-
-        if (isRepayment) {
-            totalRepayment = monthlyPayment * termInMonths
-            totalInterest = totalRepayment - amount.toFloat()
-        } else {
-            totalInterest = termInMonths * monthlyPayment
-            totalRepayment = totalInterest + amount.toFloat()
+    val totals by remember(monthlyPayment, termInMonths, amount, isRepayment){
+        derivedStateOf{
+            if (isRepayment) {
+                val totalRepayment = monthlyPayment * termInMonths
+                val totalInterest = totalRepayment - amount.toFloat()
+                Pair(totalRepayment, totalInterest)
+            } else {
+                val totalInterest = termInMonths * monthlyPayment
+                val totalRepayment = totalInterest + amount.toFloat()
+                Pair(totalRepayment, totalInterest)
+            }
         }
-
-        return Pair(totalRepayment, totalInterest)
     }
-    val totals by remember { mutableStateOf(calculateTotals()) }
-
+// TOD SCOPE END
     Column(
         modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.background),
