@@ -47,7 +47,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -55,7 +54,6 @@ import mortgagecalculator.composeapp.generated.resources.Res
 import mortgagecalculator.composeapp.generated.resources.moon
 import mortgagecalculator.composeapp.generated.resources.sun
 import org.jetbrains.compose.resources.imageResource
-import org.jetbrains.compose.resources.painterResource
 import kotlin.math.floor
 import kotlin.math.pow
 
