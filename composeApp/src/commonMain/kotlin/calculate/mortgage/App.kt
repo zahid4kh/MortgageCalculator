@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.pow
 
 @Composable
 fun App() {
@@ -43,9 +44,9 @@ fun App() {
 
 @Composable
 fun Calculator() {
-    var amount by remember { mutableStateOf("") }
-    var term by remember { mutableStateOf("") }
-    var rate by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("0") }
+    var term by remember { mutableStateOf("0") }
+    var rate by remember { mutableStateOf("0") }
     val rowWidth = 410.dp
     val smallTextField = rowWidth / 2
     var isRepayment by remember { mutableStateOf(false) }
@@ -131,24 +132,37 @@ fun Calculator() {
             Text(text = calculate, fontWeight = FontWeight.Bold)
         }
     }
-    var monthlyPayment by remember { mutableStateOf("") }
-    var totalRepayment by remember { mutableStateOf("") }
-    var totalInterest by remember { mutableStateOf("") }
 
+    fun termInMonths(): Float{
+        val termInMonths = term.toFloat() * 12
+        return termInMonths
+    }
+    fun monthlyRate(): Float {
+        val monthlyRate = rate.toFloat() / 12
+        return monthlyRate
+    }
+
+    fun monthlyPayment(): Float {
+        val monthlyPayment = amount.toFloat() * ((monthlyRate() * (1 + monthlyRate()).pow(termInMonths())) / ((1 + monthlyRate()).pow(termInMonths()) - 1))
+        return monthlyPayment
+    }
+
+    fun totalRepayment(): Float{
+        val totalRepayment = monthlyPayment() * termInMonths()
+        return totalRepayment
+    }
+
+    fun totalInterest(): Float{
+        val totalInterest = totalRepayment() - amount.toFloat()
+        return totalInterest
+    }
     Column(
         modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
 
-        Text(text = "Monthly Payment: $monthlyPayment")
-        Text(text = "Total Repayment: $totalRepayment")
-        Text(text = "Total Interest: $totalInterest")
-    }
-}
-
-@Composable
-fun Header(){
-    Row(modifier = Modifier.padding(top = 10.dp, bottom = 20.dp), horizontalArrangement = Arrangement.Center){
-        Text (text = title, fontWeight = FontWeight.Bold, fontSize = 30.sp)
+        Text(text = "Monthly Payment: ${monthlyPayment()}")
+        Text(text = "Total Repayment: ${totalRepayment()}")
+        Text(text = "Total Interest: ${totalInterest()}")
     }
 }
