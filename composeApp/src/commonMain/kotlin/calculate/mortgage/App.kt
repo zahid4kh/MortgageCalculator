@@ -36,6 +36,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -182,14 +183,16 @@ fun Calculator() {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)) {
                 Checkbox(
                     checked = isRepayment,
-                    onCheckedChange = { isRepayment = it; isInterestOnly = false })
-                Text(text = repayment)
+                    onCheckedChange = { isRepayment = it; isInterestOnly = false },
+                    //colors = CheckboxColors() TODO
+                )
+                Text(text = repayment, color = if (isLightMode) onPrimaryLight else onPrimaryDark)
             }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)) {
                 Checkbox(
                     checked = isInterestOnly,
                     onCheckedChange = { isInterestOnly = it; isRepayment = false })
-                Text(text = interestOnly)
+                Text(text = interestOnly, color = if (isLightMode) onPrimaryLight else onPrimaryDark)
             }
 
         }
