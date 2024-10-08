@@ -13,10 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlin.math.floor
 import kotlin.math.pow
 
 @Composable
@@ -172,9 +170,9 @@ fun Calculator() {
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
 
-        Text(text = "Monthly Payment: $monthlyPayment")
-        Text(text = "Total Repayment: ${totals.first}")
-        Text(text = "Total Interest: ${totals.second}")
+        Text(text = "Monthly Payment: ${floor(monthlyPayment * 100) / 100}")
+        Text(text = "Total Repayment: ${floor(totals.first * 100) / 100}")
+        Text(text = "Total Interest: ${floor(totals.second * 100) / 100}")
     }
 }
 
