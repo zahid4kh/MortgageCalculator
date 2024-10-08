@@ -177,3 +177,5 @@ fun Calculator() {
         Text(text = "Total Interest: ${totals.second}")
     }
 }
+
+//dist folder - wasmJsBrowserDistribution
