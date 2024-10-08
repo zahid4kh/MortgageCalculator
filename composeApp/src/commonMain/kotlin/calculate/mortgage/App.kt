@@ -39,25 +39,52 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import mortgagecalculator.composeapp.generated.resources.Res
+import mortgagecalculator.composeapp.generated.resources.moon
+import mortgagecalculator.composeapp.generated.resources.sun
+import org.jetbrains.compose.resources.imageResource
+import org.jetbrains.compose.resources.painterResource
 import kotlin.math.floor
 import kotlin.math.pow
 
 @Composable
 fun App() {
     MaterialTheme {
-        Row(modifier = Modifier.fillMaxSize().background(Color.LightGray),
-            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center){
-            Calculator()
+        var isLightMode by remember {mutableStateOf(true)}
+        val moon: ImageBitmap =  imageResource(Res.drawable.moon)
+        val sun: ImageBitmap = imageResource(Res.drawable.sun)
+
+        Column(verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally){
+            Switch (
+                checked = isLightMode,
+                onCheckedChange = {isLightMode = it},
+                thumbContent = {
+                    if (isLightMode){
+                        Icon(bitmap = sun, contentDescription = "Sun")
+                    }else{
+                        Icon(bitmap = moon, contentDescription = "Moon")
+                    }
+                })
+
+            Row(modifier = Modifier.fillMaxSize().background(Color.LightGray),
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center){
+
+                Calculator()
+            }
         }
+
     }
 }
 
