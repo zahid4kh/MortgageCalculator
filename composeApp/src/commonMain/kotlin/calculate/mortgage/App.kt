@@ -49,7 +49,6 @@ fun Calculator() {
     val smallTextField = rowWidth / 2
     var isRepayment by remember { mutableStateOf(false) }
     var isInterestOnly by remember { mutableStateOf(false) }
-    var calculateButton by remember { mutableStateOf(false) }
 
 
     Column(
@@ -114,23 +113,6 @@ fun Calculator() {
             Text(text = interestOnly)
         }
 
-        Button(
-            onClick = {calculateButton = !calculateButton},
-            colors = ButtonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = Color.Black,
-                disabledContentColor = Color.Black,
-                disabledContainerColor = Color.Unspecified
-            )
-        ) {
-
-            Icon(
-                Icons.Default.Build,
-                contentDescription = "",
-                modifier = Modifier.padding(end = 10.dp)
-            )
-            Text(text = calculate, fontWeight = FontWeight.Bold)
-        }
     }
 
     fun termInMonths(): Float{
@@ -146,12 +128,11 @@ fun Calculator() {
     val monthlyInterestRate by remember { mutableStateOf(monthlyInterestRate()) }
 
     fun monthlyPayment(): Float {
-        val monthlyPayment: Float
-            if (isRepayment){
-               monthlyPayment = amount.toFloat() * ((monthlyInterestRate * (1 + monthlyInterestRate).pow(termInMonths)) / ((1 + monthlyInterestRate).pow(termInMonths) - 1))
-            }else{
-                monthlyPayment = amount.toFloat() * monthlyInterestRate
-            }
+        val monthlyPayment: Float = if (isRepayment){
+            amount.toFloat() * ((monthlyInterestRate * (1 + monthlyInterestRate).pow(termInMonths)) / ((1 + monthlyInterestRate).pow(termInMonths) - 1))
+        }else{
+            amount.toFloat() * monthlyInterestRate
+        }
         return monthlyPayment
     }
     val monthlyPayment by remember { mutableStateOf(monthlyPayment()) }
@@ -170,21 +151,15 @@ fun Calculator() {
 
         return Pair(totalRepayment, totalInterest)
     }
-    var totals by remember { mutableStateOf(Pair(0f, 0f)) }
-    LaunchedEffect(calculateButton){
-        if (calculateButton){
-            totals = calculateTotals()
-        }
-    }
-
+    val totals by remember { mutableStateOf(calculateTotals()) }
 
     Column(
         modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
 
-        Text(text = if (calculateButton) "Monthly Payment: $monthlyPayment" else "")
-        Text(text = if (calculateButton) "Total Repayment: ${totals.first}" else "")
-        Text(text = if (calculateButton) "Total Interest: ${totals.second}" else "")
+        Text(text = "Monthly Payment: $monthlyPayment")
+        Text(text = "Total Repayment: ${totals.first}")
+        Text(text = "Total Interest: ${totals.second}")
     }
 }
