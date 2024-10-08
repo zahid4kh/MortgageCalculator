@@ -26,10 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlin.math.pow
 
 @Composable
@@ -137,32 +135,55 @@ fun Calculator() {
         val termInMonths = term.toFloat() * 12
         return termInMonths
     }
-    fun monthlyRate(): Float {
+    val termInMonths by remember { mutableStateOf(termInMonths()) }
+
+    fun monthlyInterestRate(): Float {
         val monthlyRate = rate.toFloat() / 12
         return monthlyRate
     }
+    val monthlyInterestRate by remember { mutableStateOf(monthlyInterestRate()) }
 
     fun monthlyPayment(): Float {
-        val monthlyPayment = amount.toFloat() * ((monthlyRate() * (1 + monthlyRate()).pow(termInMonths())) / ((1 + monthlyRate()).pow(termInMonths()) - 1))
+        val monthlyPayment =
+            if (isRepayment){
+                amount.toFloat() * ((monthlyInterestRate * (1 + monthlyInterestRate).pow(termInMonths)) / ((1 + monthlyInterestRate).pow(termInMonths) - 1))
+            }else{
+                amount.toFloat() * monthlyInterestRate
+            }
         return monthlyPayment
     }
+    val monthlyPayment by remember { mutableStateOf(monthlyPayment()) }
 
     fun totalRepayment(): Float{
-        val totalRepayment = monthlyPayment() * termInMonths()
+        val totalRepayment =
+            if (isRepayment){
+                monthlyPayment * termInMonths
+            }else {
+                totalInterest + amount.toFloat()
+            }
         return totalRepayment
     }
+    val totalRepayment by remember { mutableStateOf(totalRepayment()) }
 
     fun totalInterest(): Float{
-        val totalInterest = totalRepayment() - amount.toFloat()
+        val totalInterest =
+            if (isRepayment){
+                totalRepayment - amount.toFloat()
+            }else{
+                termInMonths * monthlyPayment
+            }
         return totalInterest
     }
+    val totalInterest by remember {mutableStateOf( totalInterest()) }
+
+
     Column(
         modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
 
-        Text(text = "Monthly Payment: ${monthlyPayment()}")
-        Text(text = "Total Repayment: ${totalRepayment()}")
-        Text(text = "Total Interest: ${totalInterest()}")
+        Text(text = "Monthly Payment: $monthlyPayment")
+        Text(text = "Total Repayment: $totalRepayment")
+        Text(text = "Total Interest: $totalInterest")
     }
 }
