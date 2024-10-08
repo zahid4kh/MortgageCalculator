@@ -54,7 +54,6 @@ kotlin {
     }
 }
 
-
 compose.desktop {
     application {
         mainClass = "calculate.mortgage.MainKt"
