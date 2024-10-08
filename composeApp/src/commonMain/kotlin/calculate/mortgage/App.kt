@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Clear
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlin.math.pow
 
@@ -45,6 +47,23 @@ fun Calculator() {
     var amount by remember { mutableStateOf("0") }
     var term by remember { mutableStateOf("0") }
     var rate by remember { mutableStateOf("0") }
+
+    var amountf by remember { mutableStateOf(amount.toFloat()) }
+    var termf by remember { mutableStateOf(term.toFloat()) }
+    var ratef by remember { mutableStateOf(rate.toFloat()) }
+
+    LaunchedEffect(amount) {
+        amountf = if (amount.isNotEmpty()) amount.toFloatOrNull() ?: 0f else 0f
+    }
+
+    LaunchedEffect(term) {
+        termf = if (term.isNotEmpty()) term.toFloatOrNull() ?: 0f else 0f
+    }
+
+    LaunchedEffect(rate) {
+        ratef = if (rate.isNotEmpty()) rate.toFloatOrNull() ?: 0f else 0f
+    }
+
     val rowWidth = 410.dp
     val smallTextField = rowWidth / 2
     var isRepayment by remember { mutableStateOf(true) }
@@ -62,6 +81,7 @@ fun Calculator() {
         OutlinedTextField(value = amount,
             onValueChange = { amount = it },
             label = { Text(mortgageAmount) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.width(rowWidth),
             trailingIcon = {
                 Icon(Icons.Default.Clear, contentDescription = "Clear",
@@ -79,7 +99,8 @@ fun Calculator() {
                     Icon(Icons.Default.Clear, contentDescription = "Clear",
                         modifier = Modifier.clickable(enabled = true, onClick = { term = "" })
                     )
-                })
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
 
             Spacer(modifier = Modifier.width(5.dp))
 
@@ -91,7 +112,8 @@ fun Calculator() {
                     Icon(Icons.Default.Clear, contentDescription = "Clear",
                         modifier = Modifier.clickable(enabled = true, onClick = { rate = "" })
                     )
-                })
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
         }
 
         Text(
@@ -115,32 +137,36 @@ fun Calculator() {
 
     }
 // TODO SCOPE START
-    val termInMonths by remember { derivedStateOf { term.toFloat() * 12 } }
-    val monthlyInterestRate by remember { derivedStateOf { rate.toFloat() / 12 } }
+    val termInMonths by remember { derivedStateOf { termf * 12 } }
+    val monthlyInterestRate by remember { derivedStateOf { ratef / 100 / 12 } }
 
-    val monthlyPayment by remember (amount, monthlyInterestRate, termInMonths, isRepayment) {
+    val monthlyPayment by remember (amountf, monthlyInterestRate, termInMonths, isRepayment, isInterestOnly) {
         derivedStateOf {
             if (isRepayment){
-                amount.toFloat() * ((monthlyInterestRate * (1 + monthlyInterestRate).pow(termInMonths)) / ((1 + monthlyInterestRate).pow(termInMonths) - 1))
-            }else{
-                amount.toFloat() * monthlyInterestRate
+                amountf * ((monthlyInterestRate * (1 + monthlyInterestRate).pow(termInMonths)) / ((1 + monthlyInterestRate).pow(termInMonths) - 1))
+            }else if (isInterestOnly){
+                amountf * monthlyInterestRate
+            } else {
+                0f
             }
         }
     }
-    val totals by remember(monthlyPayment, termInMonths, amount, isRepayment){
+    val totals by remember(monthlyPayment, termInMonths, amountf, isRepayment, isInterestOnly){
         derivedStateOf{
             if (isRepayment) {
                 val totalRepayment = monthlyPayment * termInMonths
-                val totalInterest = totalRepayment - amount.toFloat()
+                val totalInterest = totalRepayment - amountf
+                Pair(totalRepayment, totalInterest)
+            } else if (isInterestOnly){
+                val totalInterest = termInMonths * monthlyPayment
+                val totalRepayment = totalInterest + amountf
                 Pair(totalRepayment, totalInterest)
             } else {
-                val totalInterest = termInMonths * monthlyPayment
-                val totalRepayment = totalInterest + amount.toFloat()
-                Pair(totalRepayment, totalInterest)
+                Pair (0f, 0f)
             }
         }
     }
-// TOD SCOPE END
+// TODO SCOPE END
     Column(
         modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
             .background(MaterialTheme.colorScheme.background),
