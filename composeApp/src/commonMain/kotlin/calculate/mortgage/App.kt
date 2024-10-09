@@ -62,6 +62,8 @@ import mortgagecalculator.composeapp.generated.resources.moon
 import mortgagecalculator.composeapp.generated.resources.sun
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
+import ui.inverseSurfaceDark
+import ui.inverseSurfaceLight
 import ui.onPrimaryDark
 import ui.onPrimaryLight
 import ui.onSecondaryDark
@@ -80,6 +82,8 @@ import ui.surfaceDark
 import ui.surfaceLight
 import ui.tertiaryContainerDark
 import ui.tertiaryContainerLight
+import ui.tertiaryDark
+import ui.tertiaryLight
 import kotlin.math.floor
 import kotlin.math.pow
 
@@ -163,9 +167,9 @@ fun Calculator() {
                     focusedContainerColor = Color.Transparent,
                     focusedBorderColor = if (isLightMode) primaryContainerLight else primaryContainerDark,
                     focusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
-                    unfocusedLabelColor = if (isLightMode) outlineLight else outlineDark,
+                    unfocusedLabelColor = if (isLightMode) tertiaryLight else tertiaryDark,
                     focusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
-                    unfocusedTextColor = if (isLightMode) outlineLight else outlineDark)
+                    unfocusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark)
             )
 
             Row(modifier = Modifier.width(rowWidth)) {
