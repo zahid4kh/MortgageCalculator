@@ -23,17 +23,23 @@
 package calculate.mortgage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Checkbox
@@ -61,44 +67,36 @@ import mortgagecalculator.composeapp.generated.resources.Res
 import mortgagecalculator.composeapp.generated.resources.moon
 import mortgagecalculator.composeapp.generated.resources.sun
 import org.jetbrains.compose.resources.imageResource
-import org.jetbrains.compose.resources.painterResource
-import ui.inverseSurfaceDark
-import ui.inverseSurfaceLight
 import ui.onPrimaryDark
 import ui.onPrimaryLight
 import ui.onSecondaryDark
 import ui.onSecondaryLight
-import ui.outlineDark
-import ui.outlineLight
 import ui.primaryContainerDark
 import ui.primaryContainerLight
 import ui.primaryDark
 import ui.primaryLight
-import ui.secondaryContainerDark
-import ui.secondaryContainerLight
 import ui.secondaryDark
 import ui.secondaryLight
 import ui.surfaceDark
 import ui.surfaceLight
 import ui.tertiaryContainerDark
 import ui.tertiaryContainerLight
-import ui.tertiaryDark
-import ui.tertiaryLight
 import kotlin.math.floor
 import kotlin.math.pow
 
 @Composable
 fun App() {
     MaterialTheme {
+        val scrollState = rememberScrollState()
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top,
-            modifier = Modifier.fillMaxSize()){
+            modifier = Modifier.fillMaxSize().verticalScroll(scrollState) ){
 
             Calculator()
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun Calculator() {
     var amount by remember { mutableStateOf("0") }
@@ -127,7 +125,7 @@ fun Calculator() {
 
     val rowWidth = 410.dp
     val smallTextField = rowWidth / 2
-    var isRepayment by remember { mutableStateOf(true) }
+    var isRepayment by remember { mutableStateOf(false) }
     var isInterestOnly by remember { mutableStateOf(false) }
 
 
@@ -141,12 +139,15 @@ fun Calculator() {
                 Icon(bitmap = moon, contentDescription = "Moon")
             }
         })
+    val scrollable = rememberScrollState()
+    FlowRow(modifier = Modifier
+        .fillMaxSize()
+        .background(if (isLightMode) surfaceLight else surfaceDark)
+        .horizontalScroll(state = scrollable),
+        maxItemsInEachRow = 1,
+        horizontalArrangement = Arrangement.Center, verticalArrangement = Arrangement.Center){
 
-    Row(modifier = Modifier.fillMaxSize().background(if (isLightMode) surfaceLight else surfaceDark),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center){
-
-        Column(modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
+        Column(modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(30.dp))
             .background(if (isLightMode) primaryLight else primaryDark),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
@@ -167,7 +168,7 @@ fun Calculator() {
                     focusedContainerColor = Color.Transparent,
                     focusedBorderColor = if (isLightMode) primaryContainerLight else primaryContainerDark,
                     focusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
-                    unfocusedLabelColor = if (isLightMode) tertiaryLight else tertiaryDark,
+                    unfocusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryLight,
                     focusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
                     unfocusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark)
             )
@@ -187,9 +188,9 @@ fun Calculator() {
                         focusedContainerColor = Color.Transparent,
                         focusedBorderColor = if (isLightMode) primaryContainerLight else primaryContainerDark,
                         focusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
-                        unfocusedLabelColor = if (isLightMode) outlineLight else outlineDark,
+                        unfocusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryLight,
                         focusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
-                        unfocusedTextColor = if (isLightMode) outlineLight else outlineDark),
+                        unfocusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark),
 
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
 
@@ -207,9 +208,9 @@ fun Calculator() {
                     colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Transparent,
                         focusedBorderColor = if (isLightMode) primaryContainerLight else primaryContainerDark,
                         focusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
-                        unfocusedLabelColor = if (isLightMode) outlineLight else outlineDark,
+                        unfocusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryLight,
                         focusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
-                        unfocusedTextColor = if (isLightMode) outlineLight else outlineDark),
+                        unfocusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark),
 
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
             }
@@ -295,8 +296,9 @@ fun Calculator() {
             }
         }
 // TODO SCOPE END
+        Spacer(modifier = Modifier.width(5.dp).height(10.dp))
         Column(
-            modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(20.dp))
+            modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(30.dp))
                 .background(if (isLightMode) secondaryLight else secondaryDark),
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
 
