@@ -33,15 +33,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,12 +66,20 @@ import ui.onPrimaryDark
 import ui.onPrimaryLight
 import ui.onSecondaryDark
 import ui.onSecondaryLight
+import ui.outlineDark
+import ui.outlineLight
+import ui.primaryContainerDark
+import ui.primaryContainerLight
 import ui.primaryDark
 import ui.primaryLight
+import ui.secondaryContainerDark
+import ui.secondaryContainerLight
 import ui.secondaryDark
 import ui.secondaryLight
 import ui.surfaceDark
 import ui.surfaceLight
+import ui.tertiaryContainerDark
+import ui.tertiaryContainerLight
 import kotlin.math.floor
 import kotlin.math.pow
 
@@ -81,6 +94,7 @@ fun App() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Calculator() {
     var amount by remember { mutableStateOf("0") }
@@ -144,7 +158,11 @@ fun Calculator() {
                     Icon(Icons.Default.Clear, contentDescription = "Clear",
                         modifier = Modifier.clickable(enabled = true, onClick = { amount = "" })
                     )
-                })
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    focusedBorderColor = if (isLightMode) primaryContainerLight else primaryContainerDark)
+            )
 
             Row(modifier = Modifier.width(rowWidth)) {
 
@@ -184,14 +202,41 @@ fun Calculator() {
                 Checkbox(
                     checked = isRepayment,
                     onCheckedChange = { isRepayment = it; isInterestOnly = false },
-                    //colors = CheckboxColors() TODO
-                )
+                    colors = CheckboxColors(
+                        checkedBoxColor = if (isLightMode) secondaryLight else secondaryDark,
+                        uncheckedBoxColor = Color.Transparent,
+                        checkedCheckmarkColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
+                        uncheckedCheckmarkColor = Color.Transparent,
+                        disabledCheckedBoxColor = Color.Transparent,
+                        disabledUncheckedBoxColor = Color.Transparent,
+                        disabledIndeterminateBoxColor = Color.Transparent,
+                        checkedBorderColor = if (isLightMode) tertiaryContainerLight else tertiaryContainerDark,
+                        uncheckedBorderColor = if (isLightMode) tertiaryContainerLight else tertiaryContainerDark,
+                        disabledBorderColor = Color.Transparent,
+                        disabledUncheckedBorderColor = Color.Unspecified,
+                        disabledIndeterminateBorderColor = Color.Unspecified
+                    ))
+
                 Text(text = repayment, color = if (isLightMode) onPrimaryLight else onPrimaryDark)
             }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(rowWidth)) {
                 Checkbox(
                     checked = isInterestOnly,
-                    onCheckedChange = { isInterestOnly = it; isRepayment = false })
+                    onCheckedChange = { isInterestOnly = it; isRepayment = false },
+                    colors = CheckboxColors(
+                        checkedBoxColor = if (isLightMode) secondaryLight else secondaryDark,
+                        uncheckedBoxColor = Color.Transparent,
+                        checkedCheckmarkColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
+                        uncheckedCheckmarkColor = Color.Transparent,
+                        disabledCheckedBoxColor = Color.Transparent,
+                        disabledUncheckedBoxColor = Color.Transparent,
+                        disabledIndeterminateBoxColor = Color.Transparent,
+                        checkedBorderColor = if (isLightMode) tertiaryContainerLight else tertiaryContainerDark,
+                        uncheckedBorderColor = if (isLightMode) tertiaryContainerLight else tertiaryContainerDark,
+                        disabledBorderColor = Color.Transparent,
+                        disabledUncheckedBorderColor = Color.Unspecified,
+                        disabledIndeterminateBorderColor = Color.Unspecified
+                    ))
                 Text(text = interestOnly, color = if (isLightMode) onPrimaryLight else onPrimaryDark)
             }
 
