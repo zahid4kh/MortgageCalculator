@@ -161,7 +161,11 @@ fun Calculator() {
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
-                    focusedBorderColor = if (isLightMode) primaryContainerLight else primaryContainerDark)
+                    focusedBorderColor = if (isLightMode) primaryContainerLight else primaryContainerDark,
+                    focusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
+                    unfocusedLabelColor = if (isLightMode) outlineLight else outlineDark,
+                    focusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
+                    unfocusedTextColor = if (isLightMode) outlineLight else outlineDark)
             )
 
             Row(modifier = Modifier.width(rowWidth)) {
@@ -175,6 +179,14 @@ fun Calculator() {
                             modifier = Modifier.clickable(enabled = true, onClick = { term = "" })
                         )
                     },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        focusedBorderColor = if (isLightMode) primaryContainerLight else primaryContainerDark,
+                        focusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
+                        unfocusedLabelColor = if (isLightMode) outlineLight else outlineDark,
+                        focusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
+                        unfocusedTextColor = if (isLightMode) outlineLight else outlineDark),
+
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
 
                 Spacer(modifier = Modifier.width(5.dp))
@@ -188,6 +200,13 @@ fun Calculator() {
                             modifier = Modifier.clickable(enabled = true, onClick = { rate = "" })
                         )
                     },
+                    colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Transparent,
+                        focusedBorderColor = if (isLightMode) primaryContainerLight else primaryContainerDark,
+                        focusedLabelColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
+                        unfocusedLabelColor = if (isLightMode) outlineLight else outlineDark,
+                        focusedTextColor = if (isLightMode) onPrimaryLight else onPrimaryDark,
+                        unfocusedTextColor = if (isLightMode) outlineLight else outlineDark),
+
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
             }
 
