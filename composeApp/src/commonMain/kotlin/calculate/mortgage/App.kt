@@ -148,7 +148,7 @@ fun Calculator() {
         horizontalArrangement = Arrangement.Center, verticalArrangement = Arrangement.Center){
 
         Column(modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(30.dp))
-            .background(if (isLightMode) primaryLight else primaryDark),
+            .background(if (isLightMode) primaryLight else primaryDark).padding(horizontal = 5.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
 
@@ -299,7 +299,7 @@ fun Calculator() {
         Spacer(modifier = Modifier.width(5.dp).height(10.dp))
         Column(
             modifier = Modifier.width(500.dp).height(600.dp).clip(shape = RoundedCornerShape(30.dp))
-                .background(if (isLightMode) secondaryLight else secondaryDark),
+                .background(if (isLightMode) secondaryLight else secondaryDark).padding(horizontal = 5.dp),
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
 
             Text(text = "Monthly Payment: ${floor(monthlyPayment * 100) / 100}", color = if (isLightMode) onSecondaryLight else onSecondaryDark)
